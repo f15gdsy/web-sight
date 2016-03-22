@@ -1,0 +1,36 @@
+{
+  "name": "web-sight",
+  "version": "0.0.1",
+  "description": "A JavaScript library for position & size related calculation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp dev"
+  },
+  "keywords": [
+    "position",
+    "size",
+    "scroll"
+  ],
+  "author": "Wu Yifeng",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.7.2",
+    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-register": "^6.7.2",
+    "babelify": "^7.2.0",
+    "browser-sync": "^2.11.1",
+    "browserify": "^13.0.0",
+    "del": "^2.2.0",
+    "eslint-config-airbnb": "^6.1.0",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^2.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.3",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
+  }
+}
