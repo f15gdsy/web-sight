@@ -5,9 +5,12 @@ const DEFAULT_OPTS = {
 }
 
 const EVENTS = {
-  COME_OUT: 'come-out',
-  COME_OUT_FROM_TOP: 'come-out-from-top',
-  COME_OUT_FROM_BOTTOM: 'come-out-from-bottom',
+  APPEAR: 'appear',
+  APPEAR_FROM_TOP: 'appear-from-top',
+  APPEAR_FROM_BOTTOM: 'appear-from-bottom',
+  DISAPPEAR: 'disappear',
+  DISAPPEAR_FROM_TOP: 'disappear-from-top',
+  DISAPPEAR_FROM_BOTTOM: 'disappear-from-bottom',
   VISIBLE: 'visible',
   INVISIBLE: 'invisible',
 };
@@ -40,7 +43,8 @@ class WebSight {
   }
 
   _update() {
-    let comeout = false;
+    let appear = false;
+    let disappear = false;
 
     if (this.checkVisible()) {
       this.emit(EVENTS.VISIBLE);
@@ -48,17 +52,25 @@ class WebSight {
       this.emit(EVENTS.INVISIBLE);
     }
 
-    if (this.checkComeOutFromTop()) {
-      this.emit(EVENTS.COME_OUT_FROM_TOP);
-      comeout = true;
+    if (this.checkAppeaerFromTop()) {
+      this.emit(EVENTS.APPEAR_FROM_TOP);
+      appear = true;
     }
-    else if (this.checkComeOutFromBottom()) {
-      this.emit(EVENTS.COME_OUT_FROM_BOTTOM);
-      comeout = true;
+    else if (this.checkAppeaerFromBottom()) {
+      this.emit(EVENTS.APPEAR_FROM_BOTTOM);
+      appear = true;
+    } else if (this.checkDisappearFromTop()) {
+      this.emit(EVENTS.DISAPPEAR_FROM_TOP);
+      disappear = true;
+    } else if (this.checkDisappearFromBottom()) {
+      this.emit(EVENTS.DISAPPEAR_FROM_BOTTOM);
+      disappear = true;
     }
 
-    if (comeout) {
-      this.emit(EVENTS.COME_OUT);
+    if (appear) {
+      this.emit(EVENTS.APPEAR);
+    } else if (disappear) {
+      this.emit(EVENTS.DISAPPEAR);
     }
   }
 
@@ -119,7 +131,7 @@ class WebSight {
     }
   }
 
-  checkComeOutFromTop() {
+  checkAppeaerFromTop() {
     const geo = this.geo;
     const prevGeo = this.prevGeo;
 
@@ -132,7 +144,7 @@ class WebSight {
     }
   }
 
-  checkComeOutFromBottom() {
+  checkAppeaerFromBottom() {
     const geo = this.geo;
     const prevGeo = this.prevGeo;
     const browserGeo = this.browserGeo;
@@ -143,6 +155,32 @@ class WebSight {
     } else {
       return (geo.viewPos.y + geo.size.h < browserGeo.viewSize.h) &&
         (prevGeo.viewPos.y + prevGeo.size.h >= browserGeo.viewSize.h);
+    }
+  }
+
+  checkDisappearFromTop() {
+    const geo = this.geo;
+    const prevGeo = this.prevGeo;
+
+    if (this.opts.partially) {
+      return geo.viewPos.y < 0 && prevGeo.viewPos.y >= 0;
+    } else {
+      return (geo.viewPos.y + geo.size.h < 0) &&
+        (prevGeo.viewPos.y + prevGeo.size.h >= 0);
+    }
+  }
+
+  checkDisappearFromBottom() {
+    const geo = this.geo;
+    const prevGeo = this.prevGeo;
+    const browserGeo = this.browserGeo;
+
+    if (this.opts.partially) {
+      return (geo.viewPos.y + geo.size.h > browserGeo.viewSize.h) &&
+        (prevGeo.viewPos.y + prevGeo.size.h <= browserGeo.viewSize.h);
+    } else {
+      return (geo.viewPos.y > browserGeo.viewSize.h) &&
+        (prevGeo.viewPos.y <= browserGeo.viewSize.h);
     }
   }
 }
