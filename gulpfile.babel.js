@@ -10,11 +10,13 @@ import sourcemaps from 'gulp-sourcemaps';
 import uglify from 'gulp-uglify';
 import browserSync from 'browser-sync';
 
+import config from './config/config.dev';
+
 const sync = browserSync.create();
 
 const browserifyOpts = {
   debug: true,
-  entries: path.join('src', 'index.js'),
+  entries: config.scripts.ENTRY,
   standalone: 'WebSight',
   transform: [
     'babelify',
@@ -25,16 +27,19 @@ const bundler = watchify(browserify(watchifyOpts));
 bundler.on('update', bundle);
 
 function bundle() {
-  return bundler.bundle()
+  let temp = bundler.bundle()
     .on('error', () => console.error())
-    .pipe(source('web-sight.js'))
+    .pipe(source(config.scripts.OUTPUT))
     .pipe(buffer())
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(uglify())
-    .pipe(sourcemaps.write('./maps', { addComment: false }))
-    .pipe(gulp.dest('dist'))
-    .pipe(gulp.dest('examples/src/js'))
-    .pipe(sync.stream());
+    .pipe(sourcemaps.write('./maps', { addComment: false }));
+
+  config.scripts.OUTPUT_DIR.forEach(dir => {
+    temp = temp.pipe(gulp.dest(dir))
+  });
+
+  return temp.pipe(sync.stream());
 }
 
 
@@ -64,7 +69,8 @@ const sendMaps = (req, res, next) => {
 
 const serverOpts = {
   server: {
-    baseDir: './examples',
+    baseDir: './examples/dist',
+    index: "index.html",
     middleware: [
       sendMaps,
     ],
