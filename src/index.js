@@ -4,6 +4,14 @@ const DEFAULT_OPTS = {
   partially: false,
 }
 
+const EVENTS = {
+  COME_OUT: 'come-out',
+  COME_OUT_FROM_TOP: 'come-out-from-top',
+  COME_OUT_FROM_BOTTOM: 'come-out-from-bottom',
+  VISIBLE: 'visible',
+  INVISIBLE: 'invisible',
+};
+
 class WebSight {
   constructor(el, opts = {}) {
     this.el = el;
@@ -32,17 +40,25 @@ class WebSight {
   }
 
   _update() {
+    let comeout = false;
+
     if (this.checkVisible()) {
-      this.emit('visible');
+      this.emit(EVENTS.VISIBLE);
     } else {
-      this.emit('invisible');
+      this.emit(EVENTS.INVISIBLE);
     }
 
     if (this.checkComeOutFromTop()) {
-      this.emit('come-out-from-top');
+      this.emit(EVENTS.COME_OUT_FROM_TOP);
+      comeout = true;
     }
-    if (this.checkComeOutFromBottom()) {
-      this.emit('come-out-from-bottom');
+    else if (this.checkComeOutFromBottom()) {
+      this.emit(EVENTS.COME_OUT_FROM_BOTTOM);
+      comeout = true;
+    }
+
+    if (comeout) {
+      this.emit(EVENTS.COME_OUT);
     }
   }
 
